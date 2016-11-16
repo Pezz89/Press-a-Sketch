@@ -33,6 +33,6 @@ void loop()
         }
         Serial.println();
         // wait 
-        delay(5);
+        delay(25);
     }
 }

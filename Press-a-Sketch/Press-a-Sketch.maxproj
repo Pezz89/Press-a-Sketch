@@ -2,7 +2,7 @@
 	"name" : "Press-a-Sketch",
 	"version" : 1,
 	"creationdate" : -732900327,
-	"modificationdate" : -732892248,
+	"modificationdate" : -732830694,
 	"viewrect" : [ 25.0, 69.0, 300.0, 500.0 ],
 	"autoorganize" : 1,
 	"hideprojectwindow" : 0,
@@ -34,6 +34,11 @@
 ,
 		"code" : 		{
 			"delaynoint.gendsp" : 			{
+				"kind" : "gendsp",
+				"local" : 1
+			}
+,
+			"Rodriguez_pitcher.gendsp" : 			{
 				"kind" : "gendsp",
 				"local" : 1
 			}
