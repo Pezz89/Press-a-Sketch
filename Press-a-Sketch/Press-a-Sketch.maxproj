@@ -2,7 +2,7 @@
 	"name" : "Press-a-Sketch",
 	"version" : 1,
 	"creationdate" : -732900327,
-	"modificationdate" : -732898132,
+	"modificationdate" : -732892248,
 	"viewrect" : [ 25.0, 69.0, 300.0, 500.0 ],
 	"autoorganize" : 1,
 	"hideprojectwindow" : 0,
@@ -22,6 +22,19 @@
 ,
 			"ArduinoInterface.maxpat" : 			{
 				"kind" : "patcher",
+				"local" : 1
+			}
+,
+			"GrainSynth.maxpat" : 			{
+				"kind" : "patcher",
+				"local" : 1
+			}
+
+		}
+,
+		"code" : 		{
+			"delaynoint.gendsp" : 			{
+				"kind" : "gendsp",
 				"local" : 1
 			}
 
