@@ -8,7 +8,7 @@
 			"architecture" : "x86"
 		}
 ,
-		"rect" : [ 0.0, 44.0, 922.0, 694.0 ],
+		"rect" : [ -41.0, 46.0, 1366.0, 694.0 ],
 		"bglocked" : 0,
 		"openinpresentation" : 1,
 		"default_fontsize" : 12.0,
@@ -28,6 +28,37 @@
 		"digest" : "",
 		"tags" : "",
 		"boxes" : [ 			{
+				"box" : 				{
+					"comment" : "",
+					"id" : "obj-9",
+					"maxclass" : "inlet",
+					"numinlets" : 0,
+					"numoutlets" : 1,
+					"outlettype" : [ "" ],
+					"patching_rect" : [ 393.0, -19.0, 25.0, 25.0 ]
+				}
+
+			}
+, 			{
+				"box" : 				{
+					"bgcolor" : [ 0.961381, 0.95461, 0.927813, 1.0 ],
+					"buffername" : "grainbuff",
+					"id" : "obj-8",
+					"labelbgcolor" : [ 0.999491, 0.97894, 0.9782, 1.0 ],
+					"linecolor" : [ 0.311774, 0.315578, 0.315501, 1.0 ],
+					"maxclass" : "waveform~",
+					"numinlets" : 5,
+					"numoutlets" : 6,
+					"outlettype" : [ "float", "float", "float", "float", "list", "" ],
+					"patching_rect" : [ 124.5, 88.0, 1155.0, 495.0 ],
+					"presentation" : 1,
+					"presentation_rect" : [ 105.5, 82.679497, 1155.0, 495.0 ],
+					"selectioncolor" : [ 0.580547, 0.588935, 0.573723, 0.501961 ],
+					"ticks" : 1
+				}
+
+			}
+, 			{
 				"box" : 				{
 					"id" : "obj-5",
 					"maxclass" : "bpatcher",
@@ -103,7 +134,16 @@
 
 			}
  ],
-		"lines" : [  ],
+		"lines" : [ 			{
+				"patchline" : 				{
+					"destination" : [ "obj-8", 2 ],
+					"disabled" : 0,
+					"hidden" : 0,
+					"source" : [ "obj-9", 0 ]
+				}
+
+			}
+ ],
 		"dependency_cache" : [ 			{
 				"name" : "GUI_GrainDisplay.maxpat",
 				"bootpath" : "/Users/samuelperry/QMUL_Work/IDMT/Assignment_3/Press-a-Sketch/patchers",
