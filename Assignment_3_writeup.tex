@@ -1,0 +1,238 @@
+\documentclass[titlepage]{scrartcl}
+\usepackage{enumitem}
+\usepackage[british]{babel}
+\usepackage[style=apa, backend=biber]{biblatex}
+\DeclareLanguageMapping{british}{british-apa}
+\usepackage{url}
+\usepackage{float}
+\usepackage[labelformat=empty]{caption}
+\restylefloat{table}
+\usepackage{perpage}
+\MakePerPage{footnote}
+\usepackage{abstract}
+\usepackage{graphicx}
+% Create hyperlinks in bibliography
+\usepackage{hyperref}
+\usepackage{amsmath}
+
+\usepackage[T1]{fontenc}
+\usepackage[utf8]{inputenc}
+\usepackage{blindtext}
+\setkomafont{disposition}{\normalfont\bfseries}
+
+\graphicspath{
+    {./resources/},
+}
+\addbibresource{~/Documents/library.bib}
+
+\newsavebox{\abstractbox}
+\renewenvironment{abstract}
+  {\begin{lrbox}{0}\begin{minipage}{\textwidth}
+   \begin{center}\normalfont\sectfont\abstractname\end{center}\quotation}
+  {\endquotation\end{minipage}\end{lrbox}%
+   \global\setbox\abstractbox=\box0 }
+
+\usepackage{etoolbox}
+\makeatletter
+\expandafter\patchcmd\csname\string\maketitle\endcsname
+  {\vskip\z@\@plus3fill}
+  {\vskip\z@\@plus2fill\box\abstractbox\vskip\z@\@plus1fill}
+  {}{}
+\makeatother
+
+\DeclareCiteCommand{\citeyearpar}
+    {}
+    {\mkbibparens{\bibhyperref{\printdate}}}
+    {\multicitedelim}
+    {}
+
+% MATLAB Code block stuff...
+\usepackage{color}
+\usepackage{listings}
+
+\definecolor{dkgreen}{rgb}{0,0.6,0}
+\definecolor{gray}{rgb}{0.5,0.5,0.5}
+
+\lstset{language=Matlab,
+   keywords={break,case,catch,continue,else,elseif,end,for,function,
+      global,if,otherwise,persistent,return,switch,try,while},
+   basicstyle=\ttfamily,
+   keywordstyle=\color{blue},
+   commentstyle=\color{gray},
+   stringstyle=\color{dkgreen},
+   numbers=left,
+   numberstyle=\tiny\color{gray},
+   stepnumber=1,
+   numbersep=10pt,
+   backgroundcolor=\color{white},
+   tabsize=4,
+   showspaces=false,
+   showstringspaces=false}
+
+\begin{document}
+\title{ECS742P - Interactive Digital Multimedia Techniques}
+\subtitle{\LARGE{CruftFest Project - ``Press-a-Sketch''}}
+\author{Sam Perry - EC16039}
+
+\begin{abstract}
+    This report details the creation of the ``Press-a-Sketch'' granular
+    synthesis controller for presentation at CruftFest'16. The project consists
+    of a touchscreen interface and peripheral dials, built into an
+    Etch-a-Sketch, that interface with a granular synthesizer patch implemented
+    in Max/MSP. Motivations for various design decisions and the
+    range of technical challenges encountered are outlined to provide a clear
+    overview of the project. Potential improvements are then discussed, to illustrate the
+    various strengths and weaknesses of the approach taken in the realisation of
+    this project.
+\end{abstract}
+\maketitle
+
+\section{Overview}
+There are a number of commercial controllers, such as the Korg KAOS Pad, Roli
+Seaboard and the Ableton Push, that leverage pressure sensing to provide
+natural and responsive compositional tools. This project aimed to emulate this
+style of control to provide an intuitive and tactile means for controlling
+granular synthesis. To achieve this, the Etch-a-Sketch was modified using a
+number of electronic sensors to allow for control over a software synthesizer.
+ 
+\subsection{Hardware}
+\subsubsection{Pressure Sensitive Screen}
+The pressure sensitive screen is designed to react to varying pressures applied by a user, to produce
+relevant changes in audio in such a way that a user can easily relate their
+actions to the output of the tool.
+To achieve this, the project uses four force-sensitive resistors (FSRs) to
+measure pressure exerted on the corners of a raised plastic screen. The screen
+was designed to be entirely free standing, with a pillar in each corner resting
+on top of an FSR. This allowed measurements to be taken for all four corners of
+the screen, that represented the pressure across it's surface.
+
+\subsubsection{Dials}
+Two potentiometers were attached to replace the dials originally used for
+drawing on the Etch-a-Sketch. These were simply attached in place of the
+original mechanism and were used as a way of setting static parameters that are
+set and remain at their values until set again (this contrasts the value output
+by the FSRs that will always return to a resting value).
+
+\subsubsection{Arduino Uno}
+The six sensors needed to transfer data to the granular synthesizer running on a
+Macbook Air. An Arduino Uno was used to collect data from sensors and relay it to the
+computer via it's USB port. Although the Arduino is more than capable of
+processing the values internally before sending them via serial port to the
+synthesizer, it was decided that for ease of development, the raw integer
+values would be sent and processed in software on the computer.
+
+\subsection{Software}
+\subsubsection{Programming Environments}
+Software was written in Max 6 to provide a synthesis engine and user interface
+for the controller. Max was chosen due to prior experience with this
+environment, and for it's powerful audio processing capabilities. In addition,
+a number of the Alex Harker externals were utilized to aid in sample accurate
+granulation~\parencite{harker2012}. The Arduino development environment was
+used for development of software embedded in the Arduino.
+
+\subsubsection{Audio Synthesis}
+The synthesizer was designed to be able to output overlapping streams of grains
+taken from an input sample at random. The grains would be selected from within
+a variable range and would be overlapped with a constant factor of 4 (a
+parameter that was deemed unnecessary to map to a variable control). This was
+achieved by loading four instances of a subpatch, and offsetting each by
+$i\frac{\text{Grain Size}}{4}\text{ms}$ (where $i$ is the subpatch index).
+Each instance would then play grains at the rate of a phasor, selecting and
+windowing new audio chunk on each cycle to create the overlapping effect. 
+In addition to this, a pitch shifter was added so that each grain could be
+pitch shifted by a varying amount.  This allowed for user control over the
+overall pitch of the output.
+
+\subsubsection{Serial Data Interpretation}
+Data retrieved from the Arduino needed to be interpreted correctly by Max in
+order to use the sensor values as parameters for the granular synthesizer. This
+was achieved by using the Max serial object to read raw bytes from the serial
+port. New line characters were then detected and used for the segmentation of
+bytes into lists of 6 integer values. Through experimentation with different
+rates, the serial port was set to be polled every 50ms. This value was chosen
+as it offered a compromise between the low latency responsiveness offered by
+low values and the low computational cost as a result of high values. Quicker
+rates were found to place more strain on the Macbook Air than necessary. These
+did offer marginally more responsive feedback from sensors but the benefits
+were relatively minimal.
+
+\subsubsection{Graphic User Interface}
+This was mainly an aesthetic task that required all relevant information to be
+displayed to a user in an easy to understand manner. The most significant
+section of the GUI was the visualisation of input sound files and the
+range/grain position within that file. The highlighting of these parameters
+allowed for quick scrubbing of an audio file visually to find the desired
+segment for manipulation.
+
+\subsubsection{Parameter Mappings}
+The final consideration from the software perspective was the mapping from raw
+sensor values to the synthesizer's parameters. This was achieved by applying a
+number of mathematical operations on input values to provide a set of values
+that could control the synthesizer in the most intuitive way possible. The
+majority of these operations were either scaling or taking averages of multiple
+parameters. This was largely a process of trial and error, as finding mappings
+that best suited the interface was highly subjective. The final mappings were
+as follows:
+\begin{itemize}
+    \item Vertical and horizontal screen pressure - Determined the distribution
+        of pressure vertically and horizontally on the screen by calculating
+        the difference between top and bottom, and left and right sensors.
+        These were mapped to grain size and pitch parameters of the
+        synthesizer.
+    \item Overall screen pressure - Calculated by taking the mean of all FSRs,
+        this was used to calculate the overall amplitude of output grains.
+        Higher pressure resulted in louder outputs, creating a simple and
+        understandable reaction to a user's input.
+    \item Potentiometer values - These values were used ``as is'' with only
+        linear scaling applied to match synthesizer parameters. This allowed
+        the user to select grain ranges visually through the GUI in a simple
+        but effective manner.
+\end{itemize}
+
+\subsection{Significant Challenges}
+A wide range of challenges, in both hardware and software, were encountered
+throughout the creation of this project. Some of the most prominent problems
+encountered are detailed below:
+
+\begin{itemize}
+    \item Sensitivity of FSRs on pillars - Initially the screen's support
+        pillars were mounted directly onto the FSRs with a small amount of
+        dried hot glue to protect the surface of the FSR. This provided a small
+        range of sensitivity between no pressure and full pressure. I.e. a
+        small change in pressure would take the sensor value from zero to it's
+        maximum value. This was rectified by using soft contact surfaces at the
+        base of the pillars. This gave a far less sensitive range of values.
+        Pillars were also made to be adjustable in height. This allowed for
+        manual fine tuning of their sensitivity, relative to each other.
+    \item Supporting the screen in place so that it did not move horizontally -
+        Initially the screen would slide horizontally in the Etch-a-Sketch
+        casing causing pillars to slip off the FSRs. Support pillars were added
+        under the casing to allow only free vertical movement of the screen.
+    \item Making the controller self-contained - As the controller was designed
+        as a self contained tool, it was important that all components fit
+        neatly inside the casing. For this reason a breadboard was not a
+        viable method for wiring components into the arduino. A small amount of
+        veroboard, and detachable computer cables were used to attach
+        components in a neat and compact way. The arduino was also mounted to
+        the base of the Etch-a-Sketch and a small opening cut for access to the
+        USB port.
+    \item Mapping parameters from hardware to software - When reading values
+        from FSRs it was found that the weight of the screen would cause the
+        FSRs to report values above zero, even without pressure applied. For
+        this reason, a calibration button was added in order to detect the
+        resting values of the FSRs. By subtracting these initial values, the
+        FSRs could then provide a consistent range from zero. It is noted that,
+        in hind-sight, simply subtracting these resting values limits the upper
+        range of the FSRs and that a subsequent scaling would have retained
+        these at a reduced resolution.
+    \item Ensuring the synthesis functioned in an entirely sample accurate
+        manner - There were relatively few surprises or problems in the software domain due
+        to prior experience in this area, however the creation of a sample
+        accurate synthesizer resulted in significant use of signal rate
+        objects. The use of AH's dynamicdsp, ibufconcatenate, randomvals
+        objects simplified the managing of patch instances, grain playback and
+        random value generation significantly.
+\end{itemize}
+
+\printbibliography
+\end{document}
