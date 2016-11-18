@@ -29,6 +29,21 @@
 		"tags" : "",
 		"boxes" : [ 			{
 				"box" : 				{
+					"fontname" : "Arial",
+					"fontsize" : 12.0,
+					"frgb" : 0.0,
+					"id" : "obj-8",
+					"linecount" : 5,
+					"maxclass" : "comment",
+					"numinlets" : 1,
+					"numoutlets" : 0,
+					"patching_rect" : [ 112.0, 71.03968, 150.0, 74.0 ],
+					"text" : "Read values from the arduino into a list.\n\nCode adapted from the max serial tutorial."
+				}
+
+			}
+, 			{
+				"box" : 				{
 					"comment" : "Toggle to begin",
 					"id" : "obj-5",
 					"maxclass" : "inlet",
@@ -141,8 +156,8 @@
 					"numinlets" : 2,
 					"numoutlets" : 1,
 					"outlettype" : [ "bang" ],
-					"patching_rect" : [ 15.0, 97.079361, 65.0, 20.0 ],
-					"text" : "metro 100"
+					"patching_rect" : [ 15.0, 97.079361, 58.0, 20.0 ],
+					"text" : "metro 50"
 				}
 
 			}
