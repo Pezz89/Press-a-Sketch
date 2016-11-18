@@ -22,17 +22,20 @@ void loop()
         started = 1; // set the started flag to on
     }
     if(started) { // loop once serial data has been received
-        // Fix inverted pots
+        // Fix inverted pot values and send to Max
         for (int i = 0; i < 2; i++){
             Serial.print(1024 - analogRead(i));
             Serial.print(" ");
         }
+        // Sned values for FSRs to Max
         for (int i = 2; i < pinCount; i++){
             Serial.print(analogRead(i));
             Serial.print(" ");
         }
+        // Print carriage return to signal the end of this chunk of data
         Serial.println();
-        // wait 
-        delay(25);
+
+        // wait 50ms
+        delay(50);
     }
 }
